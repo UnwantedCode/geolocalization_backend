@@ -1,0 +1,9 @@
+gesdinet_jwt_refresh_token:
+    refresh_token_class: App\Entity\RefreshToken
+    ttl: 2592000 # 30 days
+    ttl_update: false
+    user_provider: 'app_user_provider'
+    token_parameter_name: 'refresh_token'
+    entity_manager: doctrine.orm.entity_manager
+    firewall: api
+    user_identity_field: email
