@@ -24,6 +24,24 @@ security:
             pattern: ^/api/register
             stateless: true
             security: false
+        admin_login:
+            pattern: ^/admin/login$
+            security: false  # Wyłączenie zabezpieczenia na stronie logowania
+        admin_logout:
+            pattern: ^/admin/logout$
+            security: false  # Wyłączenie zabezpieczenia na stronie wylogowania
+        admin:
+            pattern: ^/admin  # Chroni wszystkie ścieżki zaczynające się od /admin
+            lazy: true
+            provider: app_user_provider
+            form_login:
+                login_path: admin_login  # Adres URL formularza logowania
+                check_path: admin_login_check  # Ścieżka sprawdzania danych logowania
+                default_target_path: /admin  # Ścieżka po poprawnym zalogowaniu
+                enable_csrf: true
+            logout:
+                path: admin_logout
+                target: /admin/login
         api:
             pattern: ^/api
             stateless: true
@@ -54,7 +72,8 @@ security:
         - { path: ^/api/login, roles: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/api/token/refresh, roles: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/api/, roles: IS_AUTHENTICATED_FULLY }
-        # - { path: ^/admin, roles: ROLE_ADMIN }
+        - { path: ^/admin/login$, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/admin, roles: ROLE_ADMIN }
         # - { path: ^/profile, roles: ROLE_USER }
 
 when@test:

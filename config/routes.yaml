@@ -5,3 +5,4 @@ controllers:
     type: attribute
 jwt_refresh:
      path: /api/token/refresh
+

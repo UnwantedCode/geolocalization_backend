@@ -2,13 +2,21 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Doctrine\Orm\Filter\OrderFilter;
+use ApiPlatform\Doctrine\Orm\Filter\SearchFilter;
+use ApiPlatform\Metadata\ApiFilter;
 use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\State\Pagination\Pagination;
 use App\Repository\LocationHistoryRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Timestampable\Traits\TimestampableEntity;
 
 #[ORM\Entity(repositoryClass: LocationHistoryRepository::class)]
 #[ApiResource]
+#[ApiFilter(SearchFilter::class, properties: ['user.id' => 'exact'])]
+#[ApiFilter(OrderFilter::class, properties: ['id', 'name','createdAt'], arguments: ['orderParameterName' => 'order'])]
+//pagination
+#[ApiResource(paginationClientItemsPerPage: true)]
 class LocationHistory
 {
     use TimestampableEntity;
