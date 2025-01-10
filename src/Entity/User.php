@@ -66,6 +66,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToMany(targetEntity: LocationHistory::class, mappedBy: 'user')]
     private Collection $locationHistories;
 
+    private ?string $plainPassword = null;
+
     public function __construct()
     {
         $this->groups = new ArrayCollection();
@@ -251,6 +253,17 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
             }
         }
 
+        return $this;
+    }
+
+    public function getPlainPassword(): ?string
+    {
+        return $this->plainPassword;
+    }
+
+    public function setPlainPassword(?string $plainPassword): self
+    {
+        $this->plainPassword = $plainPassword;
         return $this;
     }
 }
