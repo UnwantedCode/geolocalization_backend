@@ -5,6 +5,7 @@ namespace App\Controller\Admin;
 use App\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
+use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\CollectionField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\DateField;
@@ -56,6 +57,12 @@ class UserCrudController extends AbstractCrudController
                 ])
                 ->allowMultipleChoices()
                 ->renderExpanded(),
+            AssociationField::new('groups', 'Grupy')
+            ->setFormTypeOptions([
+                'by_reference' => false,
+            ])
+                ->autocomplete()
+                ->setRequired(false),
             DateField::new('created_at')->onlyOnIndex(),
             DateField::new('updated_at')->onlyOnIndex(),
         ];

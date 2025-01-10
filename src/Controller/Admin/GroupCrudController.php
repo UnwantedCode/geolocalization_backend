@@ -4,6 +4,7 @@ namespace App\Controller\Admin;
 
 use App\Entity\Group;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
+use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\DateField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\EmailField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
@@ -22,6 +23,12 @@ class GroupCrudController extends AbstractCrudController
         return [
             IdField::new('id')->onlyOnIndex(),
             EmailField::new('name'),
+            AssociationField::new('users', 'Użytkownicy')
+                ->setFormTypeOptions([
+                    'by_reference' => false,
+                ])
+                ->autocomplete()
+                ->setRequired(false),
             DateField::new('created_at')->onlyOnIndex(),
             DateField::new('updated_at')->onlyOnIndex(),
         ];
