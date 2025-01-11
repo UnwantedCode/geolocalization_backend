@@ -4,6 +4,7 @@ namespace App\Entity;
 
 use ApiPlatform\Metadata\ApiResource;
 use App\Repository\MessageRepository;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Timestampable\Traits\TimestampableEntity;
 
@@ -24,6 +25,9 @@ class Message
     #[ORM\ManyToOne(inversedBy: 'messages')]
     #[ORM\JoinColumn(nullable: false)]
     private ?Group $group = null;
+
+    #[ORM\Column(type: Types::TEXT)]
+    private ?string $content = null;
 
     public function getId(): ?int
     {
@@ -50,6 +54,18 @@ class Message
     public function setGroup(?Group $group): static
     {
         $this->group = $group;
+
+        return $this;
+    }
+
+    public function getContent(): ?string
+    {
+        return $this->content;
+    }
+
+    public function setContent(string $content): static
+    {
+        $this->content = $content;
 
         return $this;
     }
