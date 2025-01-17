@@ -1,0 +1,18 @@
+// tworzenie jwt dla mercury
+// kluicz jest ten sam co w docker i .env
+
+header='{"alg":"HS256","typ":"JWT"}'
+payload='{"mercure":{"publish":["*"], "subscribe":["*"]}}'
+key='e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855'
+
+header_base64=$(echo -n "$header" | openssl enc -base64 | tr -d '\n=' | tr '/+' '_-')
+payload_base64=$(echo -n "$payload" | openssl enc -base64 | tr -d '\n=' | tr '/+' '_-')
+signature=$(echo -n "$header_base64.$payload_base64" | openssl dgst -sha256 -hmac "$key" -binary | openssl enc -base64 | tr -d '\n=' | tr '/+' '_-')
+
+echo "$header_base64.$payload_base64.$signature"
+
+
+  curl -X POST -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJtZXJjdXJlIjp7InB1Ymxpc2giOlsiKiJdLCAic3Vic2NyaWJlIjpbIioiXX19.NcLaZhkMpCtHeOEvnCtMlwz2MIn0aZt_k6agopDPQzc" \
+    -H "Content-Type: application/x-www-form-urlencoded" \
+    -d "topic=https://example.com/chat/1&data=Hello+World" \
+    http://localhost:3000/.well-known/mercure

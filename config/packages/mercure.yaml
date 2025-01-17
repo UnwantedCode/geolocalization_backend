@@ -2,4 +2,5 @@ mercure:
     hubs:
         default:
             url: '%env(MERCURE_URL)%'
-            jwt: 'file://%env(JWT_SECRET_KEY)%'
+            jwt:
+                secret: '%env(MERCURE_JWT_SECRET)%'

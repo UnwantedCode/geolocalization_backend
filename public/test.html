@@ -1,55 +1,31 @@
 <script>
 
-async function login(email, password) {
-  const response = await fetch('http://localhost:8000/api/login', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify({
-      email: email,
-      password: password
-    })
-  });
+    // Twój token JWT z odpowiednimi uprawnieniami do subskrypcji
+    const jwt = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJtZXJjdXJlIjp7InB1Ymxpc2giOlsiKiJdLCAic3Vic2NyaWJlIjpbIioiXX19.NcLaZhkMpCtHeOEvnCtMlwz2MIn0aZt_k6agopDPQzc';
 
-  if (!response.ok) {
-    throw new Error('Logowanie nie powiodło się');
-  }
+    // Topic, który subskrybujemy
+    const topic = 'https://example.com/chat/1';
 
-  const data = await response.json();
-  const token = data.token;  // Odbieramy JWT zwracany przez API
-  console.log('Zalogowano! Twój token JWT:', token);
-  return token;
-}
+    // Tworzenie subskrypcji
+    const eventSource = new EventSource(`http://localhost:3000/.well-known/mercure?topic=${encodeURIComponent(topic)}`, {
+        headers: {
+            Authorization: `Bearer ${jwt}`
+        }
+    });
 
-async function subscribeToMessages(groupId, token) {
-  const url = new URL('http://localhost:9090/.well-known/mercure');
-  url.searchParams.append('topic', `https://chat-group/messages/${groupId}`);
-  url.searchParams.append('Authorization',token);
+    // Obsługa wiadomości
+    eventSource.onmessage = (event) => {
+        const message = JSON.parse(event.data);
+        console.log('Nowa wiadomość:', message);
 
-  const eventSource = new EventSource(url, {
-      withCredentials: true,  // Używa ciasteczek dla autoryzacji
-      headers: {
-        'Authorization': `Bearer ${token}`
-      }
-  });
+        // Dodaj wiadomość do interfejsu użytkownika
+        const chatBox = document.getElementById('chat-box');
+        chatBox.innerHTML += `<p><strong>${message.user}:</strong> ${message.content}</p>`;
+    };
 
-  eventSource.onopen = () => console.log('Połączenie Mercure otwarte');
-  
-  eventSource.onmessage = function (event) {
-    const data = JSON.parse(event.data);
-    console.log(`Nowa wiadomość od ${data.user}: ${data.message}`);
-  };
-
-  eventSource.onerror = () => console.log('Błąd połączenia Mercure');
-}
-
-(async () => {
-  try {
-    const jwt = "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJpYXQiOjE3MzcwNzQxNDUsImV4cCI6MTczNzA3Nzc0NSwicm9sZXMiOlsiUk9MRV9VU0VSIiwiUk9MRV9BRE1JTiIsIlJPTEVfTU9ERVJBVE9SIl0sImVtYWlsIjoidGVzdEB0ZXN0LnBsIiwiaWQiOjEsInVzZXJuYW1lIjoia29jaGFuZWsxIiwibWVyY3VyZSI6eyJzdWJzY3JpYmUiOlsiaHR0cHM6Ly9jaGF0LWdyb3VwL21lc3NhZ2VzLyoiLCJodHRwczovL2NoYXQtZ3JvdXAvbWVzc2FnZXMvMSJdLCJwdWJsaXNoIjpbImh0dHBzOi8vY2hhdC1ncm91cC9tZXNzYWdlcy8xIl19fQ.YuUa9TK_C7ea_eT54wnfa9rCKUGtjaxrpIw7iUY3-MYGfuUi8HgNs6lMo9R_9tjHiabgIPEzhxXuhCrGOWxyRHtw4vULvbkb4OH0atgnCeqJdIFHsmuYFg0_jB_QEtDXawLjktBna1HZ_kbC0BT1uk9_NUBDVAIaInWwfp6sJOIReEEzMfwyNznhJBAf9fCxg0OoycaGGb3L0Ci6EuK1GJj36CzlFOmFNGuZVRDfiSwxvhaW7YKZobow-1HD-BIlgyHZrrWaAvPrb1q1K2qFpnS5xLC6WhwKLHpKFyQ67dqKQxmIaOUMD59o4B0FGKTdWqZnjCC5Sl6PrGQu-Wxr0w";
-    await subscribeToMessages(1, jwt);  // Subskrypcja wiadomości w grupie
-  } catch (error) {
-    console.error('Błąd:', error);
-  }
-})();
+    // Obsługa błędów
+    eventSource.onerror = (error) => {
+        console.error('Błąd EventSource:', error);
+    };
 </script>
+<div id="chat-box"></div>
