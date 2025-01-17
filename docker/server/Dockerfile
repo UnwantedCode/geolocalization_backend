@@ -12,14 +12,15 @@ RUN apt-get install -y libpq-dev \
     openssh-server \
     unzip \
     postgresql-client \
+    openssl \
     git
 RUN docker-php-ext-configure pgsql -with-pgsql=/usr/local/pgsql \
   && docker-php-ext-install xml mbstring intl curl \
-  && docker-php-ext-install pdo pdo_pgsql pgsql
+  && docker-php-ext-install pdo pdo_pgsql pgsql \
+  && docker-php-ext-install sockets
 
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 
-RUN a2enmod rewrite
 
 COPY . /var/www/html
 WORKDIR /var/www/html

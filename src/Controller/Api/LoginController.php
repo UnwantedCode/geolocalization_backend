@@ -26,6 +26,16 @@ class LoginController extends AbstractController
         }
         return new JsonResponse(['message' => 'Invalid credentials'], Response::HTTP_UNAUTHORIZED);
     }
+    // add http options to every route
+    #[Route('/api/login', name: 'login2', methods: ['OPTIONS'])]
+    public function options(): JsonResponse
+    {
+        return new JsonResponse(null, Response::HTTP_NO_CONTENT, [
+            'Access-Control-Allow-Origin' => '*',
+            'Access-Control-Allow-Methods' => 'POST, OPTIONS',
+            'Access-Control-Allow-Headers' => 'Content-Type, Authorization, from, x-requested-with',
+        ]);
+    }
 
 
 }

@@ -19,6 +19,32 @@ services:
     stdin_open: true
     entrypoint: ["/bin/bash", "-c", "ssh -f -N -L 8543:pgsql1.small.pl:5432 adamus1234@s1.small.pl & apache2-foreground"]
 
+###> symfony/mercure-bundle ###
+  mercure:
+    image: dunglas/mercure
+    container_name: mercure
+    environment:
+      SERVER_NAME: ':80'
+      JWT_KEY_FILE: /run/secrets/jwt.pem
+      MERCURE_PUBLISHER_JWT_KEY: /run/secrets/jwt.pem
+      MERCURE_SUBSCRIBER_JWT_KEY: /run/secrets/jwt.pem
+      MERCURE_ALLOW_ANONYMOUS: true
+      MERCURE_CORS_ALLOWED_ORIGINS: http://localhost:8080
+      #MERCURE_EXTRA_DIRECTIVES: 'retry: 3000'
+      LOG_LEVEL: debug
+      MERCURE_JWT_TOKEN: 'eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJpYXQiOjE3MzcwNzQxNDUsImV4cCI6MTczNzA3Nzc0NSwicm9sZXMiOlsiUk9MRV9VU0VSIiwiUk9MRV9BRE1JTiIsIlJPTEVfTU9ERVJBVE9SIl0sImVtYWlsIjoidGVzdEB0ZXN0LnBsIiwiaWQiOjEsInVzZXJuYW1lIjoia29jaGFuZWsxIiwibWVyY3VyZSI6eyJzdWJzY3JpYmUiOlsiaHR0cHM6Ly9jaGF0LWdyb3VwL21lc3NhZ2VzLyoiLCJodHRwczovL2NoYXQtZ3JvdXAvbWVzc2FnZXMvMSJdLCJwdWJsaXNoIjpbImh0dHBzOi8vY2hhdC1ncm91cC9tZXNzYWdlcy8xIl19fQ.YuUa9TK_C7ea_eT54wnfa9rCKUGtjaxrpIw7iUY3-MYGfuUi8HgNs6lMo9R_9tjHiabgIPEzhxXuhCrGOWxyRHtw4vULvbkb4OH0atgnCeqJdIFHsmuYFg0_jB_QEtDXawLjktBna1HZ_kbC0BT1uk9_NUBDVAIaInWwfp6sJOIReEEzMfwyNznhJBAf9fCxg0OoycaGGb3L0Ci6EuK1GJj36CzlFOmFNGuZVRDfiSwxvhaW7YKZobow-1HD-BIlgyHZrrWaAvPrb1q1K2qFpnS5xLC6WhwKLHpKFyQ67dqKQxmIaOUMD59o4B0FGKTdWqZnjCC5Sl6PrGQu-Wxr0w'
+    #command: /usr/bin/caddy run -config /etc/caddy/dev.Caddyfile
+    ports:
+      - "9090:80"
+    networks:
+      - symfony_network
+    secrets:
+      - jwt_key
+
 networks:
   symfony_network:
     driver: bridge
+
+secrets:
+  jwt_key:
+    file: ./config/jwt/private.pem
