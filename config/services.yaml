@@ -28,3 +28,12 @@ services:
     App\EventListener\JWTDecodedListener:
         tags:
             - { name: kernel.event_listener, event: lexik_jwt_authentication.on_jwt_decoded, method: onJWTDecoded }
+    App\WebSocket\ChatServer:
+        arguments:
+            $entityManager: '@doctrine.orm.entity_manager'
+        shared: true # Upewnij się, że serwis jest singletonem
+    App\EventListener\NewMessageNotifier:
+        arguments:
+            $chatServer: '@App\WebSocket\ChatServer'
+        tags:
+            - { name: doctrine.event_listener, event: postPersist }

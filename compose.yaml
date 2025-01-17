@@ -9,6 +9,7 @@ services:
       - ~/.ssh:/root/.ssh:ro  # Montowanie kluczy SSH z hosta
     ports:
       - "8000:80"
+      - "8080:8080"  # WebSocket Ratchet
     environment:
       - APACHE_DOCUMENT_ROOT=/var/www/html/public
     networks:
@@ -17,7 +18,8 @@ services:
       - "host.docker.internal:host-gateway"
     tty: true  # Potrzebne, aby sesje działały poprawnie
     stdin_open: true
-    entrypoint: ["/bin/bash", "-c", "ssh -f -N -L 8543:pgsql1.small.pl:5432 adamus1234@s1.small.pl & apache2-foreground"]
+    entrypoint: ["/bin/bash", "-c", "ssh -f -N -L 8543:pgsql1.small.pl:5432 adamus1234@s1.small.pl & php bin/console app:chat-server & apache2-foreground"]
+
 
 networks:
   symfony_network:

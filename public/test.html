@@ -1,0 +1,27 @@
+<script>
+    const groupId = 1; // ID grupy
+    const socket = new WebSocket(`ws://localhost:8080?groupId=${groupId}`);
+
+    socket.onopen = () => {
+        console.log('Połączono z WebSocket');
+
+        // Wyślij wiadomość
+        const message = {
+            user_id: 1,       // ID użytkownika
+            group_id: 1,      // ID grupy
+            content: 'Hello, group!',
+        };
+        socket.send(JSON.stringify(message));
+    };
+
+    socket.onmessage = (event) => {
+        const message = JSON.parse(event.data);
+        console.log('Nowa wiadomość: ', message);
+        // Wyświetl wiadomość w interfejsie użytkownika
+    };
+
+    socket.onclose = () => {
+        console.log('Połączenie zamknięte');
+    };
+
+</script>

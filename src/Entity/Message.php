@@ -9,7 +9,9 @@ use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Timestampable\Traits\TimestampableEntity;
 
 #[ORM\Entity(repositoryClass: MessageRepository::class)]
-#[ApiResource]
+#[ApiResource(
+  //  mercure: true // Automatyczne wsparcie dla Mercure
+)]
 class Message
 {
     use TimestampableEntity;
