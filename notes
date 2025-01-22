@@ -14,5 +14,12 @@ echo "$header_base64.$payload_base64.$signature"
 
   curl -X POST -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJtZXJjdXJlIjp7InB1Ymxpc2giOlsiKiJdLCAic3Vic2NyaWJlIjpbIioiXX19.NcLaZhkMpCtHeOEvnCtMlwz2MIn0aZt_k6agopDPQzc" \
     -H "Content-Type: application/x-www-form-urlencoded" \
-    -d "topic=https://example.com/chat/1&data=Hello+World" \
+    -d "topic=/chat/1&data=Hello+World" \
     http://localhost:3000/.well-known/mercure
+
+
+docker exec -it symfony-app curl -X POST \
+-H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJtZXJjdXJlIjp7InB1Ymxpc2giOlsiKiJdLCAic3Vic2NyaWJlIjpbIioiXX19.NcLaZhkMpCtHeOEvnCtMlwz2MIn0aZt_k6agopDPQzc" \
+-H "Content-Type: application/x-www-form-urlencoded" \
+-d "topic=/chat/1&data=Hello+World" \
+http://mercure/.well-known/mercure

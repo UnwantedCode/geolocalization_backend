@@ -1,0 +1,24 @@
+:80
+
+route {
+    # Obsługa żądań OPTIONS dla CORS
+    @options method OPTIONS
+    handle @options {
+        # Zwróć odpowiedź 204 No Content
+        header Access-Control-Allow-Origin http://127.0.0.1:8000
+        header Access-Control-Allow-Methods "GET, POST, OPTIONS"
+        header Access-Control-Allow-Headers "Authorization, Content-Type"
+        header Access-Control-Max-Age 86400
+        respond "" 204
+    }
+
+    # Globalne ustawienie nagłówków dla każdego żądania
+    header {
+        Access-Control-Allow-Origin http://127.0.0.1:8000
+        Access-Control-Allow-Methods "GET, POST, OPTIONS"
+        Access-Control-Allow-Headers "Authorization, Content-Type"
+        Access-Control-Max-Age 86400
+    }
+
+
+}

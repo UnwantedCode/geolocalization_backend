@@ -10,7 +10,6 @@ use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Mercure\HubInterface;
 use Symfony\Component\Mercure\Update;
 use Symfony\Component\Routing\Attribute\Route;
@@ -35,6 +34,18 @@ class MessageController extends AbstractController
 
         return $this->json($data);
     }
+    #[Route('/push_test')]
+    public function pushTest(Request $request, HubInterface $hub): JsonResponse
+    {
+        $update = new Update(
+            '/chat/1',
+            json_encode(['message' => 'Hello, World!'])
+        );
+        $hub->publish($update);
+
+        return $this->json(['status' => 'success']);
+    }
+
 
     #[Route('/group/{groupId}/message', name: 'add_group_message', methods: ['POST'])]
     public function addMessage(
@@ -71,7 +82,7 @@ class MessageController extends AbstractController
 
         // Opublikuj wiadomość w Mercure
         $update = new Update(
-            "https://example.com/chat/$groupId", // Topic danej grupy
+            "/chat/$groupId", // Topic danej grupy
             json_encode([
                 'id' => $message->getId(),
                 'user' => $user->getUsername(),

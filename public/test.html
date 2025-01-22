@@ -1,26 +1,27 @@
+<script src=" https://cdn.jsdelivr.net/npm/event-source-polyfill@1.0.31/src/eventsource.min.js "></script>
 <script>
 
     // Twój token JWT z odpowiednimi uprawnieniami do subskrypcji
     const jwt = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJtZXJjdXJlIjp7InB1Ymxpc2giOlsiKiJdLCAic3Vic2NyaWJlIjpbIioiXX19.NcLaZhkMpCtHeOEvnCtMlwz2MIn0aZt_k6agopDPQzc';
 
     // Topic, który subskrybujemy
-    const topic = 'https://example.com/chat/1';
+    const topic = '/chat/1';
 
     // Tworzenie subskrypcji
-    const eventSource = new EventSource(`http://localhost:3000/.well-known/mercure?topic=${encodeURIComponent(topic)}`, {
+    const eventSource = new EventSourcePolyfill(`http://localhost:3000/.well-known/mercure?topic=${encodeURIComponent(topic)}`, {
         headers: {
             Authorization: `Bearer ${jwt}`
         }
     });
-
     // Obsługa wiadomości
     eventSource.onmessage = (event) => {
+        console.log('Nowa wiadomość:', event.data);
         const message = JSON.parse(event.data);
         console.log('Nowa wiadomość:', message);
 
         // Dodaj wiadomość do interfejsu użytkownika
         const chatBox = document.getElementById('chat-box');
-        chatBox.innerHTML += `<p><strong>${message.user}:</strong> ${message.content}</p>`;
+        chatBox.innerHTML += `<p><strong>${message.message}:</strong></p>`;
     };
 
     // Obsługa błędów

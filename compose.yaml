@@ -33,13 +33,17 @@ services:
 #command: /usr/bin/caddy run -config /etc/caddy/dev.Caddyfile
     ports:
       - "3000:80"
+#    volumes:
+#      - ./docker/mercure/Caddyfile:/etc/caddy/Caddyfile:ro # Twój plik Caddyfile
     networks:
       - symfony_network
     secrets:
       - jwt_key
+    command: caddy run --config /etc/caddy/dev.Caddyfile
 
 networks:
   symfony_network:
+    name: symfony_network
     driver: bridge
 
 secrets:

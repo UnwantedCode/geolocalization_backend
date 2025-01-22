@@ -4,3 +4,5 @@ mercure:
             url: '%env(MERCURE_URL)%'
             jwt:
                 secret: '%env(MERCURE_JWT_SECRET)%'
+                publish: ['*']
+                subscribe: ['*']
