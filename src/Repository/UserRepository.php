@@ -33,28 +33,19 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
         $this->getEntityManager()->flush();
     }
 
-    //    /**
-    //     * @return User[] Returns an array of User objects
-    //     */
-    //    public function findByExampleField($value): array
-    //    {
-    //        return $this->createQueryBuilder('u')
-    //            ->andWhere('u.exampleField = :val')
-    //            ->setParameter('val', $value)
-    //            ->orderBy('u.id', 'ASC')
-    //            ->setMaxResults(10)
-    //            ->getQuery()
-    //            ->getResult()
-    //        ;
-    //    }
 
-    //    public function findOneBySomeField($value): ?User
-    //    {
-    //        return $this->createQueryBuilder('u')
-    //            ->andWhere('u.exampleField = :val')
-    //            ->setParameter('val', $value)
-    //            ->getQuery()
-    //            ->getOneOrNullResult()
-    //        ;
-    //    }
+    public function findGroupUsersWithLocations(User $user): array
+    {
+        return $this->createQueryBuilder('u')
+            ->addSelect('g', 'lh')
+            ->join('u.groups', 'g')
+            ->leftJoin('u.locationHistories', 'lh')
+            ->where('g IN (
+            SELECT g2 FROM App\Entity\Group g2
+            JOIN g2.users u2 WHERE u2 = :currentUser
+        )')
+            ->setParameter('currentUser', $user)
+            ->getQuery()
+            ->getResult();
+    }
 }
