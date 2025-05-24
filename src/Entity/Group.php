@@ -33,6 +33,9 @@ class Group
     #[ORM\ManyToMany(targetEntity: User::class, mappedBy: 'groups')]
     private Collection $users;
 
+    #[ORM\Column(type: 'string', length: 6, unique: true)]
+    private string $code;
+
     /**
      * @var Collection<int, Message>
      */
@@ -43,6 +46,7 @@ class Group
     {
         $this->users = new ArrayCollection();
         $this->messages = new ArrayCollection();
+        $this->generateCode();
     }
 
     public function getId(): ?int
@@ -118,8 +122,31 @@ class Group
 
         return $this;
     }
+
+    public function getCode(): string
+    {
+        return $this->code;
+    }
+
+    public function setCode(string $groupCode): self
+    {
+        $this->code = $groupCode;
+        return $this;
+    }
     public function __toString(): string
     {
         return $this->id . " - " . $this->name;
+    }
+
+    private function generateCode(): void
+    {
+        if (empty($this->code)) {
+            $this->code = self::generateUniqueGroupCode();
+        }
+    }
+
+    public static function generateUniqueGroupCode(): string
+    {
+        return str_pad((string)random_int(100000, 999999), 6, '0', STR_PAD_LEFT);
     }
 }

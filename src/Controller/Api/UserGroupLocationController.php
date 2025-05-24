@@ -25,26 +25,45 @@ class UserGroupLocationController extends AbstractController
 
         foreach ($users as $user) {
             $dto = new UserDTO();
+            $dto->id = $user->getId();
             $dto->email = $user->getEmail();
             $dto->username = $user->getUsername();
             $dto->avatar = $user->getAvatar();
 
-            // Grupy
             foreach ($user->getGroups() as $group) {
                 $groupDto = new GroupDTO();
                 $groupDto->id = $group->getId();
                 $groupDto->name = $group->getName();
+                $groupDto->code = $group->getCode();
                 $dto->groups[] = $groupDto;
             }
 
-            // Mapuj lokalizacje
-            foreach ($user->getLocationHistories() as $location) {
+            $locations = $user->getLocationHistories()->toArray();
+            usort($locations, fn($a, $b) => $b->getId() <=> $a->getId());
+
+            // first location is the most recent
+            $mostRecentLocation = $locations[0] ?? null;
+            if ($mostRecentLocation) {
                 $locDto = new LocationDTO();
+                $locDto->id = $mostRecentLocation->getId();
+                $locDto->latitude = $mostRecentLocation->getLatitude();
+                $locDto->longitude = $mostRecentLocation->getLongitude();
+                $locDto->timestamp = $mostRecentLocation->getCreatedAt()->format('Y-m-d H:i:s');
+                $locDto->batteryLevel = $mostRecentLocation->getBatteryLevel();
+                $dto->locationCurrent = $locDto;
+            }
+            $maxLocation = 5;
+            foreach ($locations as $index => $location) {
+                $locDto = new LocationDTO();
+                $locDto->id = $location->getId();
                 $locDto->latitude = $location->getLatitude();
                 $locDto->longitude = $location->getLongitude();
-                $locDto->timestamp = $location->getCreatedAt()->format('Y-m-d H:i:s'); // lub inne formatowanie
-
+                $locDto->timestamp = $location->getCreatedAt()->format('Y-m-d H:i:s');
+                $locDto->batteryLevel = $location->getBatteryLevel();
                 $dto->locationHistories[] = $locDto;
+                if ($index >= $maxLocation - 1) {
+                    break;
+                }
             }
 
             $output[] = $dto;

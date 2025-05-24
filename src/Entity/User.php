@@ -73,6 +73,10 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $this->groups = new ArrayCollection();
         $this->messages = new ArrayCollection();
         $this->locationHistories = new ArrayCollection();
+
+        // roles
+        $this->roles = ['ROLE_USER'];
+        $this->avatar = 'https://localization.adamus1234.smallhost.pl/public/assets/avatars/avatar_1.jpg';
     }
     public function getId(): ?int
     {
