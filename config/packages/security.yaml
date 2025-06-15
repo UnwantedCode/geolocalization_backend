@@ -24,6 +24,10 @@ security:
             pattern: ^/api/register
             stateless: true
             security: false
+        firebase_register:
+            pattern: ^/api/save-token
+            stateless: true
+            security: false
         admin_login:
             pattern: ^/admin/login$
             security: false  # Wyłączenie zabezpieczenia na stronie logowania

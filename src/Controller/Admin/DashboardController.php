@@ -53,6 +53,7 @@ class DashboardController extends AbstractDashboardController
             MenuItem::linkToCrud('User', 'fa fa-tags', User::class),
             MenuItem::linkToCrud('Location History', 'fa fa-file-text', LocationHistory::class),
             MenuItem::linkToCrud('Messages', 'fa fa-comment', Message::class),
+            MenuItem::linkToRoute('Send Notification', 'fa fa-bell', 'admin_firebase_send'),
             //MenuItem::linkToLogout('Logout', 'fa fa-exit'),
          ];
     }

@@ -29,7 +29,7 @@
 ###> lexik/jwt-authentication-bundle ###
 /config/jwt/*.pem
 ###< lexik/jwt-authentication-bundle ###
-
+/config/firebase/firebase-credentials.json
 .idea
 /.idea
 /.idea/*

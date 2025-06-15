@@ -52,7 +52,7 @@ class UserGroupLocationController extends AbstractController
                 $locDto->batteryLevel = $mostRecentLocation->getBatteryLevel();
                 $dto->locationCurrent = $locDto;
             }
-            $maxLocation = 5;
+            $maxLocation = 20;
             foreach ($locations as $index => $location) {
                 $locDto = new LocationDTO();
                 $locDto->id = $location->getId();
