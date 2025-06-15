@@ -9,6 +9,7 @@ use Kreait\Firebase\Factory;
 use Kreait\Firebase\Messaging\CloudMessage;
 use Kreait\Firebase\Messaging\Notification;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -72,6 +73,66 @@ class FirebaseController extends AbstractController
         }
 
         return $this->render('admin/firebase/send.html.twig', [
+            'form' => $form->createView(),
+            'sent' => $sent,
+            'error' => $error,
+            'output' => $output ?? [],
+        ]);
+    }
+
+    #[Route('/admin/firebase/send-selected', name: 'admin_firebase_send_selected')]
+    public function sendSelectedNotification(Request $request, EntityManagerInterface $em): Response
+    {
+        $form = $this->createFormBuilder()
+            ->add('title', TextType::class, ['label' => 'Tytuł'])
+            ->add('body', TextType::class, ['label' => 'Treść'])
+            ->add('tokens', EntityType::class, [
+                'class' => DeviceToken::class,
+                'choice_label' => 'token',
+                'label' => 'Wybierz urządzenia',
+                'required' => true,
+                'multiple' => true,
+                'expanded' => true,
+            ])
+            ->add('submit', SubmitType::class, ['label' => 'Wyślij tylko do zaznaczonych'])
+            ->getForm();
+
+        $form->handleRequest($request);
+
+        $sent = false;
+        $error = null;
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $data = $form->getData();
+            $selectedTokens = $data['tokens'];
+
+            try {
+                $messaging = (new Factory())
+                    ->withServiceAccount($this->firebasePath)
+                    ->createMessaging();
+
+                foreach ($selectedTokens as $token) {
+                    try {
+                        $message = CloudMessage::withTarget('token', $token->getToken())
+                            ->withNotification(Notification::create($data['title'], $data['body']));
+
+                        $messaging->send($message);
+                    } catch (NotFound | InvalidArgument $e) {
+                        $em->remove($token);
+                        $output[] = "Usunięto nieprawidłowy token: {$token->getToken()}";
+                    } catch (\Throwable $e) {
+                        $output[] = "Błąd dla tokenu {$token->getToken()}: " . $e->getMessage();
+                    }
+                }
+
+                $em->flush();
+                $sent = true;
+            } catch (\Throwable $e) {
+                $error = $e->getMessage();
+            }
+        }
+
+        return $this->render('admin/firebase/send_selected.html.twig', [
             'form' => $form->createView(),
             'sent' => $sent,
             'error' => $error,
