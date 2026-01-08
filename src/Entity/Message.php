@@ -7,6 +7,7 @@ use App\Repository\MessageRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Timestampable\Traits\TimestampableEntity;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: MessageRepository::class)]
 #[ApiResource]
@@ -26,8 +27,10 @@ class Message
     #[ORM\JoinColumn(nullable: false)]
     private ?Group $group = null;
 
-    #[ORM\Column(type: Types::TEXT)]
-    private ?string $content = null;
+    #[ORM\Column(type: Types::TEXT, nullable: false)]
+    #[Assert\NotBlank(message: "Message content cannot be empty")]
+    #[Assert\Length(max: 1000, maxMessage: "Message cannot be longer than {{ limit }} characters")]
+    private string $content;
 
     public function getId(): ?int
     {
@@ -58,7 +61,7 @@ class Message
         return $this;
     }
 
-    public function getContent(): ?string
+    public function getContent(): string
     {
         return $this->content;
     }

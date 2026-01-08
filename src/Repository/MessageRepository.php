@@ -16,28 +16,23 @@ class MessageRepository extends ServiceEntityRepository
         parent::__construct($registry, Message::class);
     }
 
-//    /**
-//     * @return Message[] Returns an array of Message objects
-//     */
-//    public function findByExampleField($value): array
-//    {
-//        return $this->createQueryBuilder('m')
-//            ->andWhere('m.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->orderBy('m.id', 'ASC')
-//            ->setMaxResults(10)
-//            ->getQuery()
-//            ->getResult()
-//        ;
-//    }
-
-//    public function findOneBySomeField($value): ?Message
-//    {
-//        return $this->createQueryBuilder('m')
-//            ->andWhere('m.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->getQuery()
-//            ->getOneOrNullResult()
-//        ;
-//    }
+    /**
+     * Find messages for a specific group with eager loading
+     *
+     * @return Message[] Returns an array of Message objects
+     */
+    public function findGroupMessages(int $groupId, int $limit = 50, int $offset = 0): array
+    {
+        return $this->createQueryBuilder('m')
+            ->addSelect('u', 'g')  // Eager loading - zapobiega N+1
+            ->join('m.user', 'u')
+            ->join('m.group', 'g')
+            ->where('m.group = :groupId')
+            ->setParameter('groupId', $groupId)
+            ->orderBy('m.createdAt', 'ASC')  // Najstarsze najpierw
+            ->setMaxResults($limit)
+            ->setFirstResult($offset)
+            ->getQuery()
+            ->getResult();
+    }
 }
