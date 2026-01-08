@@ -5,6 +5,7 @@ namespace App\Controller\Admin;
 use App\Entity\Group;
 use App\Entity\LocationHistory;
 use App\Entity\Message;
+use App\Entity\SafetyAlert;
 use App\Entity\User;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Dashboard;
 use EasyCorp\Bundle\EasyAdminBundle\Config\MenuItem;
@@ -53,6 +54,7 @@ class DashboardController extends AbstractDashboardController
             MenuItem::linkToCrud('User', 'fa fa-tags', User::class),
             MenuItem::linkToCrud('Location History', 'fa fa-file-text', LocationHistory::class),
             MenuItem::linkToCrud('Messages', 'fa fa-comment', Message::class),
+            MenuItem::linkToCrud('Safety Alerts', 'fa fa-exclamation-triangle', SafetyAlert::class),
             MenuItem::linkToRoute('Send Notification', 'fa fa-bell', 'admin_firebase_send'),
             MenuItem::linkToRoute('Send Notification For Seleced', 'fa fa-bell', 'admin_firebase_send_selected'),
             //MenuItem::linkToLogout('Logout', 'fa fa-exit'),
