@@ -2,6 +2,9 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Doctrine\Orm\Filter\OrderFilter;
+use ApiPlatform\Doctrine\Orm\Filter\SearchFilter;
+use ApiPlatform\Metadata\ApiFilter;
 use ApiPlatform\Metadata\ApiResource;
 use App\Repository\MessageRepository;
 use Doctrine\DBAL\Types\Types;
@@ -11,6 +14,8 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: MessageRepository::class)]
 #[ApiResource]
+#[ApiFilter(SearchFilter::class, properties: ['group' => 'exact'])]
+#[ApiFilter(OrderFilter::class, properties: ['createdAt' => 'DESC'])]
 class Message
 {
     use TimestampableEntity;

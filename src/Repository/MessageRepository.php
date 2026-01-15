@@ -29,7 +29,7 @@ class MessageRepository extends ServiceEntityRepository
             ->join('m.group', 'g')
             ->where('m.group = :groupId')
             ->setParameter('groupId', $groupId)
-            ->orderBy('m.createdAt', 'ASC')  // Najstarsze najpierw
+            ->orderBy('m.createdAt', 'DESC')  // Najnowsze najpierw
             ->setMaxResults($limit)
             ->setFirstResult($offset)
             ->getQuery()

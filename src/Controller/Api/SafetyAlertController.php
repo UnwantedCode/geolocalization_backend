@@ -119,18 +119,18 @@ class SafetyAlertController extends AbstractController
         $chatMessage->setGroup($group);
 
         $messageContent = sprintf(
-            "🚨 SOS Alert from %s at coordinates (%.6f, %.6f)",
+            "SOS Alert od %s współrzędne (%.6f, %.6f)",
             $user->getUsername(),
             $latitude,
             $longitude
         );
 
         if ($message) {
-            $messageContent .= "\nMessage: " . $message;
+            $messageContent .= "\nWiadomość: " . $message;
         }
 
         if ($batteryLevel !== null) {
-            $messageContent .= sprintf("\nBattery: %d%%", $batteryLevel);
+            $messageContent .= sprintf("\nBateria: %d%%", $batteryLevel);
         }
 
         $chatMessage->setContent($messageContent);
