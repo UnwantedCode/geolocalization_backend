@@ -29,6 +29,7 @@ class UserGroupLocationController extends AbstractController
             $dto->email = $user->getEmail();
             $dto->username = $user->getUsername();
             $dto->avatar = $user->getAvatar();
+            $dto->privacyMode = $user->isPrivacyMode();
 
             foreach ($user->getGroups() as $group) {
                 $groupDto = new GroupDTO();

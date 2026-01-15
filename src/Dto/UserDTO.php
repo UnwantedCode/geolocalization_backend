@@ -10,6 +10,7 @@ class UserDTO
     public string $email;
     public string $username;
     public string $avatar;
+    public bool $privacyMode = false;
     public array $groups = [];
     public ?LocationDTO $locationCurrent = null;
 
