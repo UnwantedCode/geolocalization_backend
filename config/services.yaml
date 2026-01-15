@@ -38,3 +38,9 @@ services:
     App\Controller\Api\PasswordResetController:
         arguments:
             $mailerEmail: '%env(MAILER_EMAIL)%'
+
+    App\State\LocationHistoryProcessor:
+        arguments:
+            $persistProcessor: '@api_platform.doctrine.orm.state.persist_processor'
+        tags:
+            - { name: 'api_platform.state_processor', priority: 10 }

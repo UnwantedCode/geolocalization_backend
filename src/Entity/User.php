@@ -36,6 +36,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $avatar = null;
 
+    #[ORM\Column(type: 'boolean')]
+    private bool $privacyMode = false;
+
     /**
      * @var list<string> The user roles
      */
@@ -273,5 +276,16 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function __toString(): string
     {
         return $this->id . " - " . $this->email;
+    }
+
+    public function isPrivacyMode(): bool
+    {
+        return $this->privacyMode;
+    }
+
+    public function setPrivacyMode(bool $privacyMode): static
+    {
+        $this->privacyMode = $privacyMode;
+        return $this;
     }
 }
