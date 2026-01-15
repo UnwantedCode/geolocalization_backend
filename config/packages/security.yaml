@@ -24,6 +24,10 @@ security:
             pattern: ^/api/register
             stateless: true
             security: false
+        password_reset:
+            pattern: ^/api/password
+            stateless: true
+            security: false
         admin_login:
             pattern: ^/admin/login$
             security: false  # Wyłączenie zabezpieczenia na stronie logowania
@@ -71,6 +75,7 @@ security:
         - { path: ^/api/register, roles: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/api/login, roles: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/api/token/refresh, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/api/password, roles: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/api/, roles: IS_AUTHENTICATED_FULLY }
         - { path: ^/admin/login$, roles: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/admin, roles: ROLE_ADMIN }

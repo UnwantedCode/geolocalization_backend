@@ -34,3 +34,7 @@ services:
             $persistProcessor: '@api_platform.doctrine.orm.state.persist_processor'
         tags:
             - { name: 'api_platform.state_processor', priority: 10 }
+
+    App\Controller\Api\PasswordResetController:
+        arguments:
+            $mailerEmail: '%env(MAILER_EMAIL)%'
