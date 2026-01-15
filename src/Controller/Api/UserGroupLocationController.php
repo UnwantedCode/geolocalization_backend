@@ -38,11 +38,24 @@ class UserGroupLocationController extends AbstractController
                 $dto->groups[] = $groupDto;
             }
 
-            $locations = $user->getLocationHistories()->toArray();
-            usort($locations, fn($a, $b) => $b->getId() <=> $a->getId());
+            $allLocations = $user->getLocationHistories()->toArray();
+            usort($allLocations, fn($a, $b) => $b->getId() <=> $a->getId());
+
+            // Filter locations from last 7 days
+            $sevenDaysAgo = new \DateTime('-7 days');
+            $locationsLast7Days = array_filter($allLocations, function($loc) use ($sevenDaysAgo) {
+                return $loc->getCreatedAt() >= $sevenDaysAgo;
+            });
+
+            // If no locations in last 7 days, take last 10 locations
+            if (empty($locationsLast7Days)) {
+                $locations = array_slice($allLocations, 0, 10);
+            } else {
+                $locations = array_values($locationsLast7Days);
+            }
 
             // first location is the most recent
-            $mostRecentLocation = $locations[0] ?? null;
+            $mostRecentLocation = $allLocations[0] ?? null;
             if ($mostRecentLocation) {
                 $locDto = new LocationDTO();
                 $locDto->id = $mostRecentLocation->getId();
@@ -52,8 +65,8 @@ class UserGroupLocationController extends AbstractController
                 $locDto->batteryLevel = $mostRecentLocation->getBatteryLevel();
                 $dto->locationCurrent = $locDto;
             }
-            $maxLocation = 20;
-            foreach ($locations as $index => $location) {
+
+            foreach ($locations as $location) {
                 $locDto = new LocationDTO();
                 $locDto->id = $location->getId();
                 $locDto->latitude = $location->getLatitude();
@@ -61,9 +74,6 @@ class UserGroupLocationController extends AbstractController
                 $locDto->timestamp = $location->getCreatedAt()->format('Y-m-d H:i:s');
                 $locDto->batteryLevel = $location->getBatteryLevel();
                 $dto->locationHistories[] = $locDto;
-                if ($index >= $maxLocation - 1) {
-                    break;
-                }
             }
 
             $output[] = $dto;
