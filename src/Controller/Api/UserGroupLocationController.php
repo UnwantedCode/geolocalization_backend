@@ -36,6 +36,7 @@ class UserGroupLocationController extends AbstractController
                 $groupDto->id = $group->getId();
                 $groupDto->name = $group->getName();
                 $groupDto->code = $group->getCode();
+                $groupDto->ownerId = $group->getOwner()->getId();
                 $dto->groups[] = $groupDto;
             }
 
